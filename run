@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# Builds + starts the infrastructure-tools container via docker-compose if it 
+# is not already running
+
+# Sets the 'ops' user+group inside the container as the current UID:GID
+
+# Executes a command passing any params in the arg list before 
+# the arg -- as docker exec args
+
+set -o pipefail
+
+container_name='infrastructure-tools'
+default_cmd=('/bin/sh')
+default_args=('-it')
+
+args=(); cmd=()
+while (( "$#" > 0 )); do
+  if [[ "$1" == '--' ]]; then
+    shift; args=("${cmd[@]}"); cmd=("$@"); break
+  else
+    cmd+=("$1"); shift
+  fi
+done
+
+if (( "${#cmd[@]}" == 0 )); then
+  cmd=("${default_cmd[@]}")
+  args=("${default_args[@]}")
+fi
+
+is_windows=0 
+compose_file='docker-compose.yml'
+if which winpty >/dev/null 2>&1; then
+  is_windows=1
+  compose_file='docker-compose-win.yml'
+  echo "HOST_UID=1000" >  .env
+  echo "HOST_GID=50"   >> .env
+else
+  echo "HOST_UID=$(id -u ${USER})" >  .env
+  echo "HOST_GID=$(id -g ${USER})" >> .env
+fi
+echo "HOST_HOME=$HOME"           >> .env
+
+is_running() {
+  local running="$(docker inspect -f '{{.State.Running}}' $container_name 2>/dev/null)"
+  if [[ "$running" == 'true' ]]; then return 0; fi
+  return 1
+}
+
+# Runs a command, if on a tty it will print a message and spinner on STDERR
+# until done, erasing itself with terminal backspaces upon completion, and
+# return the command's outpt to STDOUT. If not in a tty, it will print the
+# message unadorned to STDERR and the command output to STDOUT. In normal use
+# STDOUT of spin will be captured in $(...) and STDERR will go to the terminal
+# and some out-of-band method will be used to determine if the spawned command
+# is successful
+spin() {
+  local message="$@ "
+  if [[ -t 1 ]]; then
+    echo -n "$message" >&2
+    # Run command in background, redirect its STDOUT and STDERR 
+    # to filehandle 3
+    exec 3< <("$@" 2>&1)
+    local out=''
+    while true; do
+      for spin in '/' '-' '\' '|'; do
+        echo -n "$spin" >&2
+        if read <&3 line; then # Get line from filehandle 3
+          out+="$line"
+          sleep 0.01
+          echo -ne '\b \b' >&2
+        else
+          # We reached EOF on filehandle 3, spawned proces is done
+          echo -ne '\b \b' >&2
+          break 2
+        fi
+      done
+    done
+    for x in $(seq 0 ${#message}); do echo -en '\b \b' >&2; done
+    sleep 0.03
+    #echo -n "$out"
+  else
+    # Run command in foreground
+    echo "$@" >&2
+    "$@"
+  fi
+}
+
+if ! is_running; then
+  spin docker-compose -f $compose_file up -d --build
+  if ! is_running; then
+    echo "docker-compose -f $compose_file up -d --build failed." >&2
+    exit 1
+  fi
+fi
+
+if (( $is_windows )); then
+  export MSYS_NO_PATHCONV=1
+  export MSYS2_ARG_CONV_EXCL="*"
+  fixcmd=()
+  for c in "${cmd[@]}"; do fixcmd+=("${c/\//\/\/}"); done
+  winpty "docker.exe" exec "${args[@]}" $container_name "${fixcmd[@]}"
+else
+  docker exec "${args[@]}" $container_name "${cmd[@]}"
+fi
+

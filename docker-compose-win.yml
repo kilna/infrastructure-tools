@@ -1,0 +1,19 @@
+version: '2'
+services:
+  infrastructure-tools:
+    build:
+      context: .
+      args:
+        OPS_UID:   ${HOST_UID}
+        OPS_GID:   ${HOST_GID}
+        HOST_HOME: ${HOST_HOME}
+    environment:
+      ENV: /etc/profile
+    volumes:
+    - $HOST_HOME:/workspace
+    - $HOST_HOME/.ssh:/workspace/.host_ssh
+    tmpfs: /workspace/.ssh
+    entrypoint: /entrypoint.sh
+    command: tail -f /dev/null  # Wait forever
+    container_name: infrastructure-tools
+    hostname: infrastructure-tools
