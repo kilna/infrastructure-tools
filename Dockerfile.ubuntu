@@ -1,0 +1,30 @@
+FROM ubuntu:19.10
+
+ENV PATH="/workspace/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+ARG OPS_UID=1000
+ARG OPS_GID=1000
+
+COPY *.sh /usr/local/bin/
+
+RUN set -e -u -x; \
+    chmod +x /usr/local/bin/*.sh; \
+    addgroup --gid ${OPS_GID} ops; \
+    adduser --home /workspace --uid ${OPS_UID} --ingroup ops ops; \
+    echo 'export PS1="\\u@\\h:\\w\\\$ "' >>/etc/profile; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+      unzip tree git sudo curl apt-transport-https build-essential vim \
+      python3 python3-pip; \
+    echo '%sudo ALL=(ALL:ALL) NOPASSWD: ALL' >> /etc/sudoers; \
+    pip3 install --upgrade setuptools; \
+    pip3 install --upgrade pip yq
+
+RUN /usr/local/bin/install.sh \
+    && rm /usr/local/bin/install.sh
+
+USER ops
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
+VOLUME /workspace
+WORKDIR /workspace
+

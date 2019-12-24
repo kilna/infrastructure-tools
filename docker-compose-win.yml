@@ -13,7 +13,6 @@ services:
     - $HOST_HOME:/workspace
     - $HOST_HOME/.ssh:/workspace/.host_ssh
     tmpfs: /workspace/.ssh
-    entrypoint: /entrypoint.sh
     command: tail -f /dev/null  # Wait forever
     container_name: infrastructure-tools
     hostname: infrastructure-tools

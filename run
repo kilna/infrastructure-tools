@@ -11,7 +11,7 @@
 set -o pipefail
 
 container_name='infrastructure-tools'
-default_cmd=('/bin/sh')
+default_cmd=('/bin/bash')
 default_args=('-it')
 
 args=(); cmd=()
