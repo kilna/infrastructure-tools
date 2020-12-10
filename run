@@ -29,10 +29,8 @@ if (( "${#cmd[@]}" == 0 )); then
 fi
 
 is_windows=0 
-compose_file='docker-compose.yml'
 if which winpty >/dev/null 2>&1; then
   is_windows=1
-  compose_file='docker-compose-win.yml'
   echo "HOST_UID=1000" >  .env
   echo "HOST_GID=50"   >> .env
 else
@@ -87,11 +85,11 @@ spin() {
 }
 
 if ! is_running; then
-  spin docker-compose -f $compose_file up -d --build
-  if ! is_running; then
-    echo "docker-compose -f $compose_file up -d --build failed." >&2
-    exit 1
-  fi
+  spin docker-compose up -d --build
+  #if ! is_running; then
+  #  echo "docker-compose up -d --build failed." >&2
+  #  exit 1
+  #fi
 fi
 
 if (( $is_windows )); then
@@ -103,4 +101,4 @@ if (( $is_windows )); then
 else
   docker exec "${args[@]}" $container_name "${cmd[@]}"
 fi
-
+#
