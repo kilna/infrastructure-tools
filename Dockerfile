@@ -1,4 +1,4 @@
-FROM alpine:3.12.1
+FROM alpine:3.13.2
 
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
@@ -27,7 +27,8 @@ COPY ops/ /ops/
 
 RUN set -e -u -x; \
     adduser -H -D -h /ops -u ${OPS_UID} -g ${OPS_GID} ops ops; \
-    chown -R ops:ops /ops
+    chown -R ops:ops /ops; \
+    chmod -x /ops/*.sh
 
 USER ops
 VOLUME /workspace
