@@ -1,10 +1,12 @@
 #!/bin/bash
 
+export PS1='\u@\h:\w\$ '
+
 cd ~
 ln -s -f /workspace/.gitconfig
 mkdir -p /workspace/.kube
 ln -s -f /workspace/.kube
-cd -
+cd - >/dev/null
 
 ssh_keys=()
 

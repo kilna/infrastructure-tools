@@ -1,7 +1,5 @@
 FROM alpine:3.13.2
 
-ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-
 ARG OPS_UID=1000
 ARG OPS_GID=1000
 
@@ -11,11 +9,9 @@ RUN set -e -u -o pipefail -x; \
     apk --no-cache add --no-scripts \
       ca-certificates jq python3 py3-pip curl unzip tree git openssl openssh bash \
       rsync make alpine-sdk automake autoconf libxml2-dev fuse-dev curl-dev \
-      fuse groff; \
+      fuse groff vim; \
     update-ca-certificates; \
-    pip install --upgrade pip; \
-    echo "export PATH='$PATH'" >>/etc/profile; \
-    echo 'export PS1="\\u@\\h:\\w\\\$ "' >>/etc/profile
+    pip install --upgrade pip
 
 COPY bin/* /usr/local/bin/
 
