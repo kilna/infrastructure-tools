@@ -86,10 +86,10 @@ spin() {
 
 if ! is_running; then
   spin docker-compose up -d --build
-  #if ! is_running; then
-  #  echo "docker-compose up -d --build failed." >&2
-  #  exit 1
-  #fi
+  if ! is_running; then
+    echo "docker-compose up -d --build failed." >&2
+    exit 1
+  fi
 fi
 
 if (( $is_windows )); then

@@ -1,11 +1,9 @@
 FROM alpine:3.12.1
 
-ENV PATH="/workspace/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 ARG OPS_UID=1000
 ARG OPS_GID=1000
-
-COPY bin/* /usr/local/bin/
 
 RUN set -e -u -o pipefail -x; \
     apk --no-cache update; \
@@ -16,18 +14,23 @@ RUN set -e -u -o pipefail -x; \
       fuse groff; \
     update-ca-certificates; \
     pip install --upgrade pip; \
-    adduser -H -D -h /workspace -u ${OPS_UID} -g ${OPS_GID} ops ops; \
-    echo 'export PATH="/workspace/bin:$PATH"' >>/etc/profile; \
-    echo 'export PS1="\\u@\\h:\\w\\\$ "' >>/etc/profile; \
-    mkdir /workspace; \
-    chown -R ops:ops /workspace
+    echo "export PATH='$PATH'" >>/etc/profile; \
+    echo 'export PS1="\\u@\\h:\\w\\\$ "' >>/etc/profile
 
-RUN chmod +rx /usr/local/bin/* \
-    && /usr/local/bin/install.sh \
-    && rm /usr/local/bin/install.sh
+COPY bin/* /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/*
+
+RUN /usr/local/bin/install.sh
+
+COPY ops/ /ops/
+
+RUN set -e -u -o pipefail; \
+    adduser -H -D -h /ops -u ${OPS_UID} -g ${OPS_GID} ops ops; \
+    chown -R ops:ops /ops
 
 USER ops
-ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
+#ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 VOLUME /workspace
 WORKDIR /workspace
 

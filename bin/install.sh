@@ -2,12 +2,12 @@
 
 set -e -u -o pipefail -x
 
-k8s_version=1.19.3         # https://github.com/kubernetes/kubernetes/releases
-doctl_version=1.54.0       # https://github.com/digitalocean/doctl/releases
-terraform_version=0.14.2   # https://github.com/hashicorp/terraform/releases
-helm_version=3.4.2         # https://github.com/helm/helm/releases
-awscli_version=1.18.193    # https://github.com/aws/aws-cli/releases
-s3fs_version=1.85          # https://github.com/s3fs-fuse/s3fs-fuse/releases
+k8s_version=1.20.5         # https://github.com/kubernetes/kubernetes/releases
+doctl_version=1.57.0       # https://github.com/digitalocean/doctl/releases
+terraform_version=0.14.9   # https://github.com/hashicorp/terraform/releases
+helm_version=3.5.3         # https://github.com/helm/helm/releases
+awscli_version=1.19.38     # https://github.com/aws/aws-cli/releases
+s3fs_version=1.89          # https://github.com/s3fs-fuse/s3fs-fuse/releases
 
 mkdir -p /tmp/s3fs
 cd /tmp/s3fs
@@ -38,7 +38,7 @@ unzip tf.zip terraform
 rm tf.zip
 chmod 755 /usr/local/bin/terraform
 ls -la
-cd /workspace
+cd ~
 terraform version
 
 curl -s -L -o /tmp/get_helm https://raw.githubusercontent.com/helm/helm/master/scripts/get
