@@ -1,8 +1,10 @@
 #!/bin/bash
 
-if [[ -e /workspace/.gitconfig ]]; then
-  cp /workspace/.gitconfig ~/
-fi
+cd ~
+ln -s /workspace/.gitconfig
+mkdir -p /workspace/.kube
+ln -s /workspace/.kube
+cd -
 
 ssh_keys=()
 
