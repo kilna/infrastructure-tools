@@ -20,6 +20,7 @@ fi
 for key in "${ssh_keys[@]}"; do
   keyfile="/workspace/.ssh/$key"
   fingerprint="$(ssh-keygen -lf "$keyfile" | awk '{print $2}')"
+  # Check if the key is already loaded
   if ! ssh-add -l | grep -q "$fingerprint"; then
     # Check if the file is world-readable
     if [[ "$(find "$keyfile" -perm '/o+r')" != '' ]]; then
