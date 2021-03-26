@@ -1,9 +1,9 @@
 #!/bin/bash
 
 cd ~
-ln -s /workspace/.gitconfig
+ln -s -f /workspace/.gitconfig
 mkdir -p /workspace/.kube
-ln -s /workspace/.kube
+ln -s -f /workspace/.kube
 cd -
 
 ssh_keys=()
