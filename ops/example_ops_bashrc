@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Place a file called .ops_bashrc in your home dir and it will automatically
+# be run when you log in if the /workspace dir is mapped to your home dir
+# as it is when used via docker-compose / the run script
+
+# This sets which keys from your mounted home dir will be loaded into ssh-agent
+ssh_keys=( kilna_github )
+

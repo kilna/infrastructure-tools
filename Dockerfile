@@ -27,8 +27,7 @@ COPY ops/ /ops/
 
 RUN set -e -u -x; \
     adduser -H -D -h /ops -u ${OPS_UID} -g ${OPS_GID} ops ops; \
-    chown -R ops:ops /ops; \
-    chmod -x /ops/*.sh
+    chown -R ops:ops /ops
 
 USER ops
 VOLUME /workspace
