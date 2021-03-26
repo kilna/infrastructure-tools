@@ -25,12 +25,11 @@ RUN /usr/local/bin/install.sh
 
 COPY ops/ /ops/
 
-RUN set -e -u -o pipefail; \
+RUN set -e -u -x; \
     adduser -H -D -h /ops -u ${OPS_UID} -g ${OPS_GID} ops ops; \
     chown -R ops:ops /ops
 
 USER ops
-#ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 VOLUME /workspace
 WORKDIR /workspace
 
