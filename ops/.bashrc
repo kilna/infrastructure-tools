@@ -8,7 +8,7 @@ mkdir -p ~/.ssh
 cp /workspace/.ssh/* /ops/.ssh
 chmod og-rwx ~/.ssh/*
 
-if [[ -e /workspace/.ops_basrc ]]; then
+if [[ -e /workspace/.ops_bashrc ]]; then
   . /workspace/.ops_bashrc
 fi
 
