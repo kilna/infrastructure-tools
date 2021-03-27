@@ -39,3 +39,6 @@ for key in "${ssh_keys[@]}"; do
   fi
 done
 
+# Load all files in ~/.kube beginning with "config" as kubeconfig files
+export KUBECONFIG="$(cd ~/.kube; echo -n "$(ls -A1 | grep -E '^config')" | tr '\n' :)"
+
