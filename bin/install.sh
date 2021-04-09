@@ -4,7 +4,7 @@ set -e -u -o pipefail -x
 
 k8s_version=1.20.5         # https://github.com/kubernetes/kubernetes/releases
 doctl_version=1.57.0       # https://github.com/digitalocean/doctl/releases
-terraform_version=0.14.9   # https://github.com/hashicorp/terraform/releases
+terraform_version=0.14.10   # https://github.com/hashicorp/terraform/releases
 helm_version=3.5.3         # https://github.com/helm/helm/releases
 awscli_version=1.19.38     # https://github.com/aws/aws-cli/releases
 s3fs_version=1.89          # https://github.com/s3fs-fuse/s3fs-fuse/releases
